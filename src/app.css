@@ -1,7 +1,0 @@
-body {
-  margin: 0;
-  background: linear-gradient(to right, rgb(72, 120, 75), rgb(66, 109, 69));
-  overflow: hidden;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  min-height: 750px;
-}
