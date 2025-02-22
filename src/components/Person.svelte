@@ -13,7 +13,7 @@
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    filter: drop-shadow(0 0 10px #00000069);
+    box-shadow: 0 0 10px #00000069;
 
     display: flex;
     justify-content: center;

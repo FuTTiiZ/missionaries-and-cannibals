@@ -155,7 +155,7 @@
     height: 3rem;
     font-size: 2rem;
     left: 1rem;
-    bottom: 1rem;
+    bottom: 32vh;
     border: none;
     background: #ffffff69;
     border: 2px solid #000;
@@ -188,7 +188,8 @@
       rgb(59, 159, 221),
       rgb(18, 133, 204)
     );
-    filter: blur(10px) drop-shadow(0 0 15px #45997d);
+    box-shadow: 0 0 15px #45997d;
+    filter: blur(10px);
   }
 
   .boat {
@@ -211,6 +212,12 @@
     z-index: 1;
   }
 
+  @keyframes bop {
+    100% {
+      translate: 0 0.5rem;
+    }
+  }
+
   .arrow {
     position: absolute;
     top: -100px;
@@ -223,8 +230,9 @@
 
     border: none;
 
-    filter: drop-shadow(0 0 5px #00ff0069);
     cursor: pointer;
+
+    animation: bop 1000ms ease-in-out infinite alternate-reverse;
   }
   .arrow::after {
     position: absolute;
