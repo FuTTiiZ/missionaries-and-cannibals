@@ -35,7 +35,18 @@
     height: 35%;
     display: flex;
     justify-content: center;
-    align-items: center;
+  }
+
+  .bank:first-child {
+    align-items: flex-end;
+    padding-bottom: 2rem;
+    padding-left: 3rem;
+  }
+
+  .bank:last-child {
+    align-items: flex-start;
+    padding-top: 2rem;
+    padding-right: 3rem;
   }
 
   .people {

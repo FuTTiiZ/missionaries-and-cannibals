@@ -38,7 +38,7 @@
     background: #ffffff8d;
     border-radius: 1rem;
     backdrop-filter: blur(15px) saturate(0.3);
-    filter: drop-shadow(0 0 10px #000);
+    box-shadow: 0 0 10px #000;
 
     display: flex;
     flex-direction: column;
