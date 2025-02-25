@@ -3,7 +3,7 @@
   import Person from './components/Person.svelte'
   import Modal from './components/Modal.svelte'
   import { type Bank, PersonType, BankType, type Move } from './lib/types'
-  import { gameState as gs } from './lib/game.svelte'
+  import { gameState as gs, moves } from './lib/game.svelte'
 
   const banks: [Bank, Bank] = $derived(
     gs.banks.map((bank, i: BankType) =>
@@ -18,12 +18,7 @@
 
   const isMoveValid = $derived(gs.isMoveValid(boat))
 
-  let moves = $state(0)
-  const success = $derived(
-    banks[BankType.END][PersonType.CANNIBAL] +
-      banks[BankType.END][PersonType.MISSIONARY] ===
-      6
-  )
+  const success = $derived(gs.currentBank && gs.isWin())
 
   const addToBoat = (type: PersonType) => {
     if (boatSum > 1) return
@@ -35,7 +30,7 @@
   const moveBoat = () => {
     gs.doMove(boat)
     boat = [0, 0]
-    moves++
+    moves.value++
   }
 
   let hintActive = $state(false)
@@ -91,7 +86,7 @@
       align-items: center;
     "
   >
-    <p style:font-size="1.5rem">You won in {moves} moves</p>
+    <p style:font-size="1.5rem">You won in {moves.value} moves</p>
     <button
       style="
         padding: 0.25rem 0.5rem;
