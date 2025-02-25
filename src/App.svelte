@@ -1,49 +1,40 @@
 <script lang="ts">
-  import Bank from './components/Bank.svelte'
+  import BankComponent from './components/Bank.svelte'
   import Person from './components/Person.svelte'
   import Modal from './components/Modal.svelte'
-  import { PersonType } from './lib/types'
+  import { type Bank, PersonType, BankType, type Move } from './lib/types'
+  import { gameState as gs } from './lib/game.svelte'
 
-  const banks: [[number, number], [number, number]] = $state([
-    [3, 3],
-    [0, 0],
-  ])
-  let currentBank: number = $state(0)
-  const oppositeBank = $derived(currentBank === 1 ? 0 : 1)
-
-  let boat = $state([0, 0])
-  const boatSum = $derived(boat.reduce((a, b) => a + b))
-
-  const isMoveValid = $derived(
-    (!(
-      banks[oppositeBank][PersonType.MISSIONARY] + boat[PersonType.MISSIONARY] >
-      0
-    ) ||
-      banks[oppositeBank][PersonType.CANNIBAL] + boat[PersonType.CANNIBAL] <=
-        banks[oppositeBank][PersonType.MISSIONARY] +
-          boat[PersonType.MISSIONARY]) &&
-      (!(banks[currentBank][PersonType.MISSIONARY] > 0) ||
-        banks[currentBank][PersonType.CANNIBAL] <=
-          banks[currentBank][PersonType.MISSIONARY])
+  const banks: [Bank, Bank] = $derived(
+    gs.banks.map((bank, i: BankType) =>
+      gs.currentBank === i
+        ? bank.map((count, j: PersonType) => count - boat[j])
+        : bank
+    ) as [Bank, Bank]
   )
 
+  let boat: Move = $state([0, 0])
+  const boatSum = $derived(boat.reduce((a, b) => a + b))
+
+  const isMoveValid = $derived(gs.isMoveValid(boat))
+
   let moves = $state(0)
-  const success = $derived(banks[1][0] + banks[1][1] === 6)
+  const success = $derived(
+    banks[BankType.END][PersonType.CANNIBAL] +
+      banks[BankType.END][PersonType.MISSIONARY] ===
+      6
+  )
 
   const addToBoat = (type: PersonType) => {
     if (boatSum > 1) return
-    banks[currentBank][type]--
     boat[type]++
   }
   const removeFromBoat = (type: PersonType) => {
     boat[type]--
-    banks[currentBank][type]++
   }
   const moveBoat = () => {
-    banks[oppositeBank][PersonType.CANNIBAL] += boat[PersonType.CANNIBAL]
-    banks[oppositeBank][PersonType.MISSIONARY] += boat[PersonType.MISSIONARY]
+    gs.doMove(boat)
     boat = [0, 0]
-    currentBank = oppositeBank
     moves++
   }
 
@@ -51,15 +42,17 @@
 </script>
 
 <main>
-  <Bank
-    active={!success && currentBank === 1}
-    bank={banks[1]}
+  <BankComponent
+    active={!success && gs.currentBank === BankType.END}
+    bank={banks[BankType.END]}
     clickHandler={addToBoat}
   />
   <div class="river">
     <div
       class="boat"
-      style="align-self: {currentBank === 0 ? 'flex-end' : 'flex-start'}"
+      style="align-self: {gs.currentBank === BankType.START
+        ? 'flex-end'
+        : 'flex-start'}"
     >
       {#each { length: boat[PersonType.CANNIBAL] }, _}
         <Person
@@ -75,16 +68,16 @@
       {/each}
       {#if boatSum > 0 && isMoveValid}
         <button
-          class="arrow {currentBank === 1 ? 'reverse' : ''}"
+          class="arrow {gs.currentBank === BankType.END ? 'reverse' : ''}"
           onclick={moveBoat}><span>Move</span></button
         >
       {/if}
     </div>
     <div class="water"></div>
   </div>
-  <Bank
-    active={!success && currentBank === 0}
-    bank={banks[0]}
+  <BankComponent
+    active={!success && gs.currentBank === BankType.START}
+    bank={banks[BankType.START]}
     clickHandler={addToBoat}
   />
 </main>
